@@ -124,3 +124,17 @@ func Serialize(data interface{}) (bytes []byte, err error) {
 	}
 	return nil, nil
 }
+
+// Error sets response status code to the given value and sets response body
+// to the given message.
+func (c *Context) ErrorObject(msg string, statusCode int) {
+	c.SetStatusCode(statusCode)
+	c.SetContentType("application/json")
+	c.WriteData(map[string]string{"error": msg})
+	// payload, err := json.Marshal(map[string]string{"error": msg})
+	// if err != nil {
+	// 	c.WriteData(map[string]string{"error": msg})
+	// } else {
+	// 	c.Write(payload)
+	// }
+}
