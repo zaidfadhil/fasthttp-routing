@@ -131,10 +131,4 @@ func (c *Context) ErrorObject(msg string, statusCode int) {
 	c.SetStatusCode(statusCode)
 	c.SetContentType("application/json")
 	c.WriteData(map[string]string{"error": msg})
-	// payload, err := json.Marshal(map[string]string{"error": msg})
-	// if err != nil {
-	// 	c.WriteData(map[string]string{"error": msg})
-	// } else {
-	// 	c.Write(payload)
-	// }
 }
