@@ -5,6 +5,7 @@
 package routing
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/valyala/fasthttp"
@@ -130,5 +131,10 @@ func Serialize(data interface{}) (bytes []byte, err error) {
 func (c *Context) ErrorObject(msg string, statusCode int) {
 	c.SetStatusCode(statusCode)
 	c.SetContentType("application/json")
-	c.WriteData(map[string]string{"error": msg})
+	payload, err := json.Marshal(map[string]string{"error": msg})
+	if err != nil {
+		c.WriteString(msg)
+	} else {
+		c.Write(payload)
+	}
 }
