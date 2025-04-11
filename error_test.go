@@ -8,19 +8,28 @@ import (
 	"encoding/json"
 	"net/http"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestNewHttpError(t *testing.T) {
 	e := NewHTTPError(http.StatusNotFound)
-	assert.Equal(t, http.StatusNotFound, e.StatusCode())
-	assert.Equal(t, http.StatusText(http.StatusNotFound), e.Error())
+	if e.StatusCode() != http.StatusNotFound {
+		t.Errorf("e.StatusCode() = %d, want %d", e.StatusCode(), http.StatusNotFound)
+	}
+	if e.Error() != http.StatusText(http.StatusNotFound) {
+		t.Errorf("e.Error() = %s, want %s", e.Error(), http.StatusText(http.StatusNotFound))
+	}
 
 	e = NewHTTPError(http.StatusNotFound, "abc")
-	assert.Equal(t, http.StatusNotFound, e.StatusCode())
-	assert.Equal(t, "abc", e.Error())
+	if e.StatusCode() != http.StatusNotFound {
+		t.Errorf("e.StatusCode() = %d, want %d", e.StatusCode(), http.StatusNotFound)
+	}
+	if e.Error() != "abc" {
+		t.Errorf("e.Error() = %s, want %s", e.Error(), "abc")
+	}
 
 	s, _ := json.Marshal(e)
-	assert.Equal(t, `{"status":404,"message":"abc"}`, string(s))
+	expected := `{"status":404,"message":"abc"}`
+	if string(s) != expected {
+		t.Errorf("json.Marshal(e) = %s, want %s", string(s), expected)
+	}
 }

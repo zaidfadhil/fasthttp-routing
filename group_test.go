@@ -7,8 +7,6 @@ package routing
 import (
 	"bytes"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestRouteGroupTo(t *testing.T) {
@@ -21,16 +19,26 @@ func TestRouteGroupTo(t *testing.T) {
 
 	group.Any("/users")
 	for _, method := range Methods {
-		assert.Equal(t, 1, router.stores[method].(*mockStore).count, "router.stores["+method+"].count@1 =")
+		if router.stores[method].(*mockStore).count != 1 {
+			t.Errorf("router.stores[%s].count@1 = %d, want %d", method, router.stores[method].(*mockStore).count, 1)
+		}
 	}
 
 	group.To("GET", "/articles")
-	assert.Equal(t, 2, router.stores["GET"].(*mockStore).count, "router.stores[GET].count@2 =")
-	assert.Equal(t, 1, router.stores["POST"].(*mockStore).count, "router.stores[POST].count@2 =")
+	if router.stores["GET"].(*mockStore).count != 2 {
+		t.Errorf("router.stores[GET].count@2 = %d, want %d", router.stores["GET"].(*mockStore).count, 2)
+	}
+	if router.stores["POST"].(*mockStore).count != 1 {
+		t.Errorf("router.stores[POST].count@2 = %d, want %d", router.stores["POST"].(*mockStore).count, 1)
+	}
 
 	group.To("GET,POST", "/comments")
-	assert.Equal(t, 3, router.stores["GET"].(*mockStore).count, "router.stores[GET].count@3 =")
-	assert.Equal(t, 2, router.stores["POST"].(*mockStore).count, "router.stores[POST].count@3 =")
+	if router.stores["GET"].(*mockStore).count != 3 {
+		t.Errorf("router.stores[GET].count@3 = %d, want %d", router.stores["GET"].(*mockStore).count, 3)
+	}
+	if router.stores["POST"].(*mockStore).count != 2 {
+		t.Errorf("router.stores[POST].count@3 = %d, want %d", router.stores["POST"].(*mockStore).count, 2)
+	}
 }
 
 func TestRouteGroupMethods(t *testing.T) {
@@ -38,56 +46,96 @@ func TestRouteGroupMethods(t *testing.T) {
 	for _, method := range Methods {
 		store := newMockStore()
 		router.stores[method] = store
-		assert.Equal(t, 0, store.count, "router.stores["+method+"].count =")
+		if store.count != 0 {
+			t.Errorf("router.stores[%s].count = %d, want %d", method, store.count, 0)
+		}
 	}
 	group := newRouteGroup("/admin", router, nil)
 
 	group.Get("/users")
-	assert.Equal(t, 1, router.stores["GET"].(*mockStore).count, "router.stores[GET].count =")
+	if router.stores["GET"].(*mockStore).count != 1 {
+		t.Errorf("router.stores[GET].count = %d, want %d", router.stores["GET"].(*mockStore).count, 1)
+	}
 	group.Post("/users")
-	assert.Equal(t, 1, router.stores["POST"].(*mockStore).count, "router.stores[POST].count =")
+	if router.stores["POST"].(*mockStore).count != 1 {
+		t.Errorf("router.stores[POST].count = %d, want %d", router.stores["POST"].(*mockStore).count, 1)
+	}
 	group.Patch("/users")
-	assert.Equal(t, 1, router.stores["PATCH"].(*mockStore).count, "router.stores[PATCH].count =")
+	if router.stores["PATCH"].(*mockStore).count != 1 {
+		t.Errorf("router.stores[PATCH].count = %d, want %d", router.stores["PATCH"].(*mockStore).count, 1)
+	}
 	group.Put("/users")
-	assert.Equal(t, 1, router.stores["PUT"].(*mockStore).count, "router.stores[PUT].count =")
+	if router.stores["PUT"].(*mockStore).count != 1 {
+		t.Errorf("router.stores[PUT].count = %d, want %d", router.stores["PUT"].(*mockStore).count, 1)
+	}
 	group.Delete("/users")
-	assert.Equal(t, 1, router.stores["DELETE"].(*mockStore).count, "router.stores[DELETE].count =")
+	if router.stores["DELETE"].(*mockStore).count != 1 {
+		t.Errorf("router.stores[DELETE].count = %d, want %d", router.stores["DELETE"].(*mockStore).count, 1)
+	}
 	group.Connect("/users")
-	assert.Equal(t, 1, router.stores["CONNECT"].(*mockStore).count, "router.stores[CONNECT].count =")
+	if router.stores["CONNECT"].(*mockStore).count != 1 {
+		t.Errorf("router.stores[CONNECT].count = %d, want %d", router.stores["CONNECT"].(*mockStore).count, 1)
+	}
 	group.Head("/users")
-	assert.Equal(t, 1, router.stores["HEAD"].(*mockStore).count, "router.stores[HEAD].count =")
+	if router.stores["HEAD"].(*mockStore).count != 1 {
+		t.Errorf("router.stores[HEAD].count = %d, want %d", router.stores["HEAD"].(*mockStore).count, 1)
+	}
 	group.Options("/users")
-	assert.Equal(t, 1, router.stores["OPTIONS"].(*mockStore).count, "router.stores[OPTIONS].count =")
+	if router.stores["OPTIONS"].(*mockStore).count != 1 {
+		t.Errorf("router.stores[OPTIONS].count = %d, want %d", router.stores["OPTIONS"].(*mockStore).count, 1)
+	}
 	group.Trace("/users")
-	assert.Equal(t, 1, router.stores["TRACE"].(*mockStore).count, "router.stores[TRACE].count =")
+	if router.stores["TRACE"].(*mockStore).count != 1 {
+		t.Errorf("router.stores[TRACE].count = %d, want %d", router.stores["TRACE"].(*mockStore).count, 1)
+	}
 }
 
 func TestRouteGroupGroup(t *testing.T) {
 	group := newRouteGroup("/admin", New(), nil)
 	g1 := group.Group("/users")
-	assert.Equal(t, "/admin/users", g1.prefix, "g1.prefix =")
-	assert.Equal(t, 0, len(g1.handlers), "len(g1.handlers) =")
+	if g1.prefix != "/admin/users" {
+		t.Errorf("g1.prefix = %s, want %s", g1.prefix, "/admin/users")
+	}
+	if len(g1.handlers) != 0 {
+		t.Errorf("len(g1.handlers) = %d, want %d", len(g1.handlers), 0)
+	}
 	var buf bytes.Buffer
 	g2 := group.Group("", newHandler("1", &buf), newHandler("2", &buf))
-	assert.Equal(t, "/admin", g2.prefix, "g2.prefix =")
-	assert.Equal(t, 2, len(g2.handlers), "len(g2.handlers) =")
+	if g2.prefix != "/admin" {
+		t.Errorf("g2.prefix = %s, want %s", g2.prefix, "/admin")
+	}
+	if len(g2.handlers) != 2 {
+		t.Errorf("len(g2.handlers) = %d, want %d", len(g2.handlers), 2)
+	}
 
 	group2 := newRouteGroup("/admin", New(), []Handler{newHandler("1", &buf), newHandler("2", &buf)})
 	g3 := group2.Group("/users")
-	assert.Equal(t, "/admin/users", g3.prefix, "g3.prefix =")
-	assert.Equal(t, 2, len(g3.handlers), "len(g3.handlers) =")
+	if g3.prefix != "/admin/users" {
+		t.Errorf("g3.prefix = %s, want %s", g3.prefix, "/admin/users")
+	}
+	if len(g3.handlers) != 2 {
+		t.Errorf("len(g3.handlers) = %d, want %d", len(g3.handlers), 2)
+	}
 	g4 := group2.Group("", newHandler("3", &buf))
-	assert.Equal(t, "/admin", g4.prefix, "g4.prefix =")
-	assert.Equal(t, 1, len(g4.handlers), "len(g4.handlers) =")
+	if g4.prefix != "/admin" {
+		t.Errorf("g4.prefix = %s, want %s", g4.prefix, "/admin")
+	}
+	if len(g4.handlers) != 1 {
+		t.Errorf("len(g4.handlers) = %d, want %d", len(g4.handlers), 1)
+	}
 }
 
 func TestRouteGroupUse(t *testing.T) {
 	var buf bytes.Buffer
 	group := newRouteGroup("/admin", New(), nil)
 	group.Use(newHandler("1", &buf), newHandler("2", &buf))
-	assert.Equal(t, 2, len(group.handlers), "len(group.handlers) =")
+	if len(group.handlers) != 2 {
+		t.Errorf("len(group.handlers) = %d, want %d", len(group.handlers), 2)
+	}
 
 	group2 := newRouteGroup("/admin", New(), []Handler{newHandler("1", &buf), newHandler("2", &buf)})
 	group2.Use(newHandler("3", &buf))
-	assert.Equal(t, 3, len(group2.handlers), "len(group2.handlers) =")
+	if len(group2.handlers) != 3 {
+		t.Errorf("len(group2.handlers) = %d, want %d", len(group2.handlers), 3)
+	}
 }
