@@ -125,7 +125,7 @@ func TestStoreGet(t *testing.T) {
 
 	tests := []struct {
 		key    string
-		value  interface{}
+		value  any
 		params string
 	}{
 		{"/gopher/bumper.png", "1", ""},

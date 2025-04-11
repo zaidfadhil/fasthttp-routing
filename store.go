@@ -35,7 +35,7 @@ func newStore() *store {
 
 // Add adds a new data item with the given parametric key.
 // The number of parameters in the key is returned.
-func (s *store) Add(key string, data interface{}) int {
+func (s *store) Add(key string, data any) int {
 	s.count++
 	return s.root.add(key, data, s.count)
 }
@@ -43,7 +43,7 @@ func (s *store) Add(key string, data interface{}) int {
 // Get returns the data item matching the given concrete key.
 // If the data item was added to the store with a parametric key before, the matching
 // parameter names and values will be returned as well.
-func (s *store) Get(path string, pvalues []string) (data interface{}, pnames []string) {
+func (s *store) Get(path string, pvalues []string) (data any, pnames []string) {
 	data, pnames, _ = s.root.get(path, pvalues)
 	return
 }
@@ -57,8 +57,8 @@ func (s *store) String() string {
 type node struct {
 	static bool // whether the node is a static node or param node
 
-	key  string      // the key identifying this node
-	data interface{} // the data associated with this node. nil if not a data node.
+	key  string // the key identifying this node
+	data any    // the data associated with this node. nil if not a data node.
 
 	order    int // the order at which the data was added. used to be pick the first one when matching multiple
 	minOrder int // minimum order among all the child nodes and this node
@@ -73,7 +73,7 @@ type node struct {
 
 // add adds a new data item to the tree rooted at the current node.
 // The number of parameters in the key is returned.
-func (n *node) add(key string, data interface{}, order int) int {
+func (n *node) add(key string, data any, order int) int {
 	matched := 0
 
 	// find the common prefix
@@ -141,14 +141,14 @@ func (n *node) add(key string, data interface{}, order int) int {
 }
 
 // addChild creates static and param nodes to store the given data
-func (n *node) addChild(key string, data interface{}, order int) int {
+func (n *node) addChild(key string, data any, order int) int {
 	// find the first occurrence of a param token
 	p0, p1 := -1, -1
-	for i := 0; i < len(key); i++ {
-		if p0 < 0 && key[i] == '<' {
+	for i, ch := range key {
+		if p0 < 0 && ch == '<' {
 			p0 = i
 		}
-		if p0 >= 0 && key[i] == '>' {
+		if p0 >= 0 && ch == '>' {
 			p1 = i
 			break
 		}
@@ -220,7 +220,7 @@ func (n *node) addChild(key string, data interface{}, order int) int {
 }
 
 // get returns the data item with the key matching the tree rooted at the current node
-func (n *node) get(key string, pvalues []string) (data interface{}, pnames []string, order int) {
+func (n *node) get(key string, pvalues []string) (data any, pnames []string, order int) {
 	order = math.MaxInt32
 
 repeat:

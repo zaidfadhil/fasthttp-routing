@@ -31,8 +31,8 @@ type (
 
 	// routeStore stores route paths and the corresponding handlers.
 	routeStore interface {
-		Add(key string, data interface{}) int
-		Get(key string, pvalues []string) (data interface{}, pnames []string)
+		Add(key string, data any) int
+		Get(key string, pvalues []string) (data any, pnames []string)
 		String() string
 	}
 )
@@ -58,7 +58,7 @@ func New() *Router {
 	}
 	r.RouteGroup = *newRouteGroup("", r, make([]Handler, 0))
 	r.NotFound(MethodNotAllowedHandler, NotFoundHandler)
-	r.pool.New = func() interface{} {
+	r.pool.New = func() any {
 		return &Context{
 			pvalues: make([]string, r.maxParams),
 			router:  r,
@@ -118,7 +118,7 @@ func (r *Router) add(method, path string, handlers []Handler) {
 }
 
 func (r *Router) find(method, path string, pvalues []string) (handlers []Handler, pnames []string) {
-	var hh interface{}
+	var hh any
 	if store := r.stores[method]; store != nil {
 		hh, pnames = store.Get(path, pvalues)
 	}

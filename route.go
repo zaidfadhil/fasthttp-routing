@@ -104,15 +104,15 @@ func (r *Route) To(methods string, handlers ...Handler) *Route {
 // The parameters should be given in the sequence of name1, value1, name2, value2, and so on.
 // If a parameter in the route is not provided a value, the parameter token will remain in the resulting URL.
 // The method will perform URL encoding for all given parameter values.
-func (r *Route) URL(pairs ...interface{}) (s string) {
+func (r *Route) URL(pairs ...any) (s string) {
 	s = r.template
-	for i := 0; i < len(pairs); i++ {
-		name := fmt.Sprintf("<%v>", pairs[i])
+	for i, v := range pairs {
+		name := fmt.Sprintf("<%v>", v)
 		value := ""
 		if i < len(pairs)-1 {
 			value = url.QueryEscape(fmt.Sprint(pairs[i+1]))
 		}
-		s = strings.Replace(s, name, value, -1)
+		s = strings.ReplaceAll(s, name, value)
 	}
 	return
 }
@@ -128,10 +128,10 @@ func (r *Route) add(method string, handlers []Handler) *Route {
 // buildURLTemplate converts a route pattern into a URL template by removing regular expressions in parameter tokens.
 func buildURLTemplate(path string) string {
 	template, start, end := "", -1, -1
-	for i := 0; i < len(path); i++ {
-		if path[i] == '<' && start < 0 {
+	for i, ch := range path {
+		if ch == '<' && start < 0 {
 			start = i
-		} else if path[i] == '>' && start >= 0 {
+		} else if ch == '>' && start >= 0 {
 			name := path[start+1 : i]
 			for j := start + 1; j < i; j++ {
 				if path[j] == ':' {

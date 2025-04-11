@@ -6,7 +6,6 @@ package routing
 
 import (
 	"bytes"
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,14 +13,14 @@ import (
 
 type mockStore struct {
 	*store
-	data map[string]interface{}
+	data map[string]any
 }
 
 func newMockStore() *mockStore {
-	return &mockStore{newStore(), make(map[string]interface{})}
+	return &mockStore{newStore(), make(map[string]any)}
 }
 
-func (s *mockStore) Add(key string, data interface{}) int {
+func (s *mockStore) Add(key string, data any) int {
 	for _, handler := range data.([]Handler) {
 		handler(nil)
 	}
@@ -73,7 +72,7 @@ func TestRouteURL(t *testing.T) {
 
 func newHandler(tag string, buf *bytes.Buffer) Handler {
 	return func(*Context) error {
-		fmt.Fprintf(buf, tag)
+		buf.WriteString(tag)
 		return nil
 	}
 }

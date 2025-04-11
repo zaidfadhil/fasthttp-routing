@@ -12,7 +12,7 @@ import (
 )
 
 // SerializeFunc serializes the given data of arbitrary type into a byte array.
-type SerializeFunc func(data interface{}) ([]byte, error)
+type SerializeFunc func(data any) ([]byte, error)
 
 // Context represents the contextual data and environment while processing an incoming HTTP request.
 type Context struct {
@@ -21,11 +21,11 @@ type Context struct {
 	Serialize SerializeFunc // the function serializing the given data of arbitrary type into a byte array.
 
 	router   *Router
-	pnames   []string               // list of route parameter names
-	pvalues  []string               // list of parameter values corresponding to pnames
-	data     map[string]interface{} // data items managed by Get and Set
-	index    int                    // the index of the currently executing handler in handlers
-	handlers []Handler              // the handlers associated with the current route
+	pnames   []string       // list of route parameter names
+	pvalues  []string       // list of parameter values corresponding to pnames
+	data     map[string]any // data items managed by Get and Set
+	index    int            // the index of the currently executing handler in handlers
+	handlers []Handler      // the handlers associated with the current route
 }
 
 // Router returns the Router that is handling the incoming HTTP request.
@@ -46,14 +46,14 @@ func (c *Context) Param(name string) string {
 
 // Get returns the named data item previously registered with the context by calling Set.
 // If the named data item cannot be found, nil will be returned.
-func (c *Context) Get(name string) interface{} {
+func (c *Context) Get(name string) any {
 	return c.data[name]
 }
 
 // Set stores the named data item in the context so that it can be retrieved later.
-func (c *Context) Set(name string, value interface{}) {
+func (c *Context) Set(name string, value any) {
 	if c.data == nil {
-		c.data = make(map[string]interface{})
+		c.data = make(map[string]any)
 	}
 	c.data[name] = value
 }
@@ -84,7 +84,7 @@ func (c *Context) Abort() {
 // If a parameter in the route is not provided a value, the parameter token will remain in the resulting URL.
 // Parameter values will be properly URL encoded.
 // The method returns an empty string if the URL creation fails.
-func (c *Context) URL(route string, pairs ...interface{}) string {
+func (c *Context) URL(route string, pairs ...any) string {
 	if r := c.router.routes[route]; r != nil {
 		return r.URL(pairs...)
 	}
@@ -94,7 +94,7 @@ func (c *Context) URL(route string, pairs ...interface{}) string {
 // WriteData writes the given data of arbitrary type to the response.
 // The method calls the Serialize() method to convert the data into a byte array and then writes
 // the byte array to the response.
-func (c *Context) WriteData(data interface{}) (err error) {
+func (c *Context) WriteData(data any) (err error) {
 	var bytes []byte
 	if bytes, err = c.Serialize(data); err == nil {
 		_, err = c.Write(bytes)
@@ -112,15 +112,15 @@ func (c *Context) init(ctx *fasthttp.RequestCtx) {
 
 // Serialize converts the given data into a byte array.
 // If the data is neither a byte array nor a string, it will call fmt.Sprint to convert it into a string.
-func Serialize(data interface{}) (bytes []byte, err error) {
-	switch data.(type) {
+func Serialize(data any) (bytes []byte, err error) {
+	switch v := data.(type) {
 	case []byte:
-		return data.([]byte), nil
+		return v, nil
 	case string:
-		return []byte(data.(string)), nil
+		return []byte(v), nil
 	default:
 		if data != nil {
-			return []byte(fmt.Sprint(data)), nil
+			return fmt.Appendf(nil, "%v", v), nil
 		}
 	}
 	return nil, nil
