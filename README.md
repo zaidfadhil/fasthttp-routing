@@ -2,7 +2,7 @@
 
 [![Test](https://github.com/zaidfadhil/fasthttp-routing/actions/workflows/test.yml/badge.svg)](https://github.com/zaidfadhil/fasthttp-routing/actions/workflows/test.yml)
 [![GoDoc](https://godoc.org/github.com/zaidfadhil/fasthttp-routing?status.png)](http://godoc.org/github.com/zaidfadhil/fasthttp-routing)
-[![Go Report](http://goreportcard.com/badge/zaidfadhil/fasthttp-routing)](http://goreportcard.com/report/zaidfadhil/fasthttp-routing)
+[![Go Report](https://goreportcard.com/badge/github.com/zaidfadhil/fasthttp-routing)](https://goreportcard.com/report/github.com/zaidfadhil/fasthttp-routing)
 
 ## Description
 
