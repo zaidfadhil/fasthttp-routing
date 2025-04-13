@@ -133,8 +133,8 @@ func (c *Context) ErrorObject(msg string, statusCode int) {
 	c.SetContentType("application/json")
 	payload, err := json.Marshal(map[string]string{"error": msg})
 	if err != nil {
-		c.WriteString(msg)
+		c.WriteString(msg) //nolint:errcheck
 	} else {
-		c.Write(payload)
+		c.Write(payload) //nolint:errcheck
 	}
 }

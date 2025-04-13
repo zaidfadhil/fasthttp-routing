@@ -20,7 +20,7 @@ func newMockStore() *mockStore {
 
 func (s *mockStore) Add(key string, data any) int {
 	for _, handler := range data.([]Handler) {
-		handler(nil)
+		handler(nil) //nolint:errcheck
 	}
 	return s.store.Add(key, data)
 }
