@@ -1,7 +1,8 @@
 # fasthttp-routing
 
-[![GoDoc](https://godoc.org/github.com/qiangxue/fasthttp-routing?status.png)](http://godoc.org/github.com/qiangxue/fasthttp-routing)
-[![Go Report](http://goreportcard.com/badge/qiangxue/fasthttp-routing)](http://goreportcard.com/report/qiangxue/fasthttp-routing)
+[![Test](https://github.com/zaidfadhil/fasthttp-routing/actions/workflows/test.yml/badge.svg)](https://github.com/zaidfadhil/fasthttp-routing/actions/workflows/test.yml)
+[![GoDoc](https://godoc.org/github.com/zaidfadhil/fasthttp-routing?status.png)](http://godoc.org/github.com/zaidfadhil/fasthttp-routing)
+[![Go Report](http://goreportcard.com/badge/zaidfadhil/fasthttp-routing)](http://goreportcard.com/report/zaidfadhil/fasthttp-routing)
 
 ## Description
 
@@ -15,16 +16,12 @@ The package has the following features:
 * flexible URL path matching, supporting URL parameters and regular expressions
 * URL creation according to the predefined routes
 
-## Requirements
-
-Go 1.5 or above.
-
 ## Installation
 
 Run the following command to install the package:
 
 ```
-go get github.com/qiangxue/fasthttp-routing
+go get github.com/zaidfadhil/fasthttp-routing
 ```
 
 ## Getting Started
@@ -37,7 +34,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/qiangxue/fasthttp-routing"
+	"github.com/zaidfadhil/fasthttp-routing"
 	"github.com/valyala/fasthttp"
 )
 
