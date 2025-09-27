@@ -1,8 +1,8 @@
 module github.com/zaidfadhil/fasthttp-routing
 
-go 1.24
+go 1.24.0
 
-require github.com/valyala/fasthttp v1.64.0
+require github.com/valyala/fasthttp v1.66.0
 
 require (
 	github.com/andybalholm/brotli v1.2.0 // indirect
